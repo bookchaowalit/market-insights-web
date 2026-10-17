@@ -131,11 +131,16 @@
   async function loadFixture(productId, options = {}) {
     const base = document.querySelector('meta[name="data-products-fixture-base"]')?.content || "fixtures/data-products/";
     const url = base.replace(/\/?$/, "/") + productId + ".json";
-    const { response, body } = await fetchJsonWithTimeout(url, {
-      method: "GET",
-      headers: { Accept: "application/json" },
-      signal: options.signal
-    }, options.timeoutMs ?? 4e3, options.fetchImpl);
+    const { response, body } = await fetchJsonWithTimeout(
+      url,
+      {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        signal: options.signal
+      },
+      options.timeoutMs ?? 4e3,
+      options.fetchImpl
+    );
     if (!response.ok) throw new Error("Fixture unavailable");
     return body;
   }
@@ -146,14 +151,7 @@
     const configured = productId === "crypto" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_CRYPTO : productId === "stocks" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_STOCKS : productId === "fx" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_FX : productId === "defi" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DEFI : productId === "flights" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_FLIGHTS : productId === "seo" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_SEO : productId === "ai_tools" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_AI_TOOLS : productId === "news" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_NEWS : productId === "discovery" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DISCOVERY : void 0;
     return configured?.trim() || fallback;
   }
-  var ENVELOPE_KEYS = [
-    "schema_version",
-    "source",
-    "retrieved_at",
-    "data_status",
-    "items",
-    "next_cursor"
-  ];
+  var ENVELOPE_KEYS = ["schema_version", "source", "retrieved_at", "data_status", "items", "next_cursor"];
   function sanitizeUserFacingMessage(kind, detail) {
     const fixtureSuffix = detail?.usingFixture ? "; using fixture fallback" : "";
     switch (kind) {
@@ -298,11 +296,16 @@
       }
     }
     try {
-      const { response, body } = await fetchJsonWithTimeout(url, {
-        method: "GET",
-        headers: { Accept: "application/json" },
-        signal: options.signal
-      }, timeoutMs, fetchImpl);
+      const { response, body } = await fetchJsonWithTimeout(
+        url,
+        {
+          method: "GET",
+          headers: { Accept: "application/json" },
+          signal: options.signal
+        },
+        timeoutMs,
+        fetchImpl
+      );
       if (!response.ok) {
         try {
           const envelope = await loadFixture2(productId);
@@ -438,8 +441,8 @@
     }
     if (productId === "seo") {
       if (item.capture_kind === "owned_page_provenance") {
-        var pageStatus = item.page_data_status || (String(item.found).toLowerCase() === "true" ? "reachable" : "unreachable");
-        var httpStatus = item.page_http_status ? " \xB7 HTTP " + item.page_http_status : "";
+        const pageStatus = item.page_data_status || (String(item.found).toLowerCase() === "true" ? "reachable" : "unreachable");
+        const httpStatus = item.page_http_status ? " \xB7 HTTP " + item.page_http_status : "";
         return (item.target_domain || item.keyword || "") + " \xB7 " + pageStatus + httpStatus;
       }
       return (item.keyword || "") + " \xB7 rank " + v(item.best_rank, "\u2014");

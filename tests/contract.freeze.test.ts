@@ -9,11 +9,7 @@ import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 
-import {
-  DATA_PRODUCT_CATALOG,
-  FREE_ONLY_DEFAULTS,
-  isDataProductEnvelope,
-} from "../src/data-products/index.ts";
+import { DATA_PRODUCT_CATALOG, FREE_ONLY_DEFAULTS, isDataProductEnvelope } from "../src/data-products/index.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -28,14 +24,7 @@ const FROZEN = [
   { id: "ai_tools", port: 8107, schemaVersion: "ai_tools.v1", repo: "book-ai-tools-data" },
 ] as const;
 
-const ENVELOPE_KEYS = [
-  "schema_version",
-  "source",
-  "retrieved_at",
-  "data_status",
-  "items",
-  "next_cursor",
-] as const;
+const ENVELOPE_KEYS = ["schema_version", "source", "retrieved_at", "data_status", "items", "next_cursor"] as const;
 
 describe("data-product v1 contract freeze (insights consumer)", () => {
   it("catalog matches frozen ports and schema_version values", () => {
@@ -100,10 +89,7 @@ describe("data-product v1 contract freeze (insights consumer)", () => {
 
   it("fixtures declare frozen schema_version values", async () => {
     for (const frozen of FROZEN) {
-      const raw = await readFile(
-        join(root, "fixtures/data-products", `${frozen.id}.json`),
-        "utf8",
-      );
+      const raw = await readFile(join(root, "fixtures/data-products", `${frozen.id}.json`), "utf8");
       const env = JSON.parse(raw) as Record<string, unknown>;
       assert.equal(env.schema_version, frozen.schemaVersion);
       for (const key of ENVELOPE_KEYS) {

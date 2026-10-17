@@ -19,10 +19,7 @@ const INSIGHTS_ROOT = join(__dirname, "..");
 // sibling checkout is absent.
 const PORTFOLIO_ROOT =
   process.env.INSIGHTS_PORTFOLIO_ROOT ||
-  join(
-    INSIGHTS_ROOT,
-    "../../../bookchaowalit-website/book-apps/portfolio/bookchaowalit-portfolio-frontend",
-  );
+  join(INSIGHTS_ROOT, "../../../bookchaowalit-website/book-apps/portfolio/bookchaowalit-portfolio-frontend");
 const PORTFOLIO_CLIENT = join(PORTFOLIO_ROOT, "src/lib/data-products/client.ts");
 
 async function portfolioAvailable() {
@@ -35,11 +32,7 @@ async function portfolioAvailable() {
 }
 
 const PORTS = [8101, 8102, 8103, 8104, 8105, 8106, 8107, 8108, 8110];
-const LOCAL_ORIGINS = [
-  "http://127.0.0.1:4173",
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-];
+const LOCAL_ORIGINS = ["http://127.0.0.1:4173", "http://localhost:3000", "http://127.0.0.1:3000"];
 const BLOCKED_ORIGINS = ["https://evil.example", "http://192.168.1.10:3000"];
 
 const failures = [];
@@ -158,14 +151,7 @@ async function verifyLiveRecords() {
       fail(`:${port} records status ${r.status}`);
       continue;
     }
-    for (const key of [
-      "schema_version",
-      "source",
-      "retrieved_at",
-      "data_status",
-      "items",
-      "next_cursor",
-    ]) {
+    for (const key of ["schema_version", "source", "retrieved_at", "data_status", "items", "next_cursor"]) {
       if (!(key in r.json)) fail(`:${port} missing ${key}`);
     }
     const blob = JSON.stringify(r.json);
@@ -286,11 +272,10 @@ assert.ok(calls.every(c => c.method === "GET"));
 assert.ok(calls.every(c => !c.url.includes("/v1/refresh")));
 console.log("PORTFOLIO_CLIENT_OK apiCount=" + apiCount);
 `;
-    const r = spawnSync(
-      process.execPath,
-      ["--experimental-strip-types", "--input-type=module", "-e", harness],
-      { encoding: "utf8", cwd: PORTFOLIO_ROOT },
-    );
+    const r = spawnSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "-e", harness], {
+      encoding: "utf8",
+      cwd: PORTFOLIO_ROOT,
+    });
     if (r.status !== 0) {
       fail(`portfolio client harness failed: ${r.stderr || r.stdout}`);
       console.error(r.stdout);
@@ -334,17 +319,7 @@ async function verifyInsightsBrowserJs() {
   const base = `http://127.0.0.1:${port}`;
 
   // Fixture mode: load each fixture JSON (same path browser uses)
-  for (const id of [
-    "crypto",
-    "stocks",
-    "fx",
-    "defi",
-    "flights",
-    "seo",
-    "ai_tools",
-    "news",
-    "discovery",
-  ]) {
+  for (const id of ["crypto", "stocks", "fx", "defi", "flights", "seo", "ai_tools", "news", "discovery"]) {
     const r = await getJson(`${base}/fixtures/data-products/${id}.json`);
     if (r.status !== 200 || !r.json?.schema_version) fail(`fixture ${id} missing`);
     else ok(`fixture ${id} ${r.json.schema_version}`);
@@ -428,11 +403,10 @@ assert.equal(ready.state, "ready");
 assert.match(sanitizeUserFacingMessage("timeout", { usingFixture: true }), /timed out/);
 console.log("INSIGHTS_CLIENT_OK liveApi=" + live.filter(r=>r.source==="api").length);
 `;
-  const r = spawnSync(
-    process.execPath,
-    ["--experimental-strip-types", "--input-type=module", "-e", harness],
-    { encoding: "utf8", cwd: INSIGHTS_ROOT },
-  );
+  const r = spawnSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "-e", harness], {
+    encoding: "utf8",
+    cwd: INSIGHTS_ROOT,
+  });
   if (r.status !== 0) {
     fail(`insights client harness failed: ${r.stderr || r.stdout}`);
     console.error(r.stdout);

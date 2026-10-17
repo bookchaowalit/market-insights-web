@@ -95,14 +95,21 @@ describe("mountProductPage", () => {
 
   it("gives every record's fields a column and shows 0, false and nested values", async () => {
     const { api, app } = mount(async () =>
-      json(envelope("stocks", [{ symbol: "AAA", change_pct: 0 }, { symbol: "BBB", halted: false, meta: { lot: 100 } }])),
+      json(
+        envelope("stocks", [
+          { symbol: "AAA", change_pct: 0 },
+          { symbol: "BBB", halted: false, meta: { lot: 100 } },
+        ]),
+      ),
     );
 
     await api.mountProductPage("stocks", app);
 
     const headers = [...app.querySelectorAll("th")].map((th) => th.textContent);
     assert.deepEqual(headers, ["symbol", "change_pct", "halted", "meta"]);
-    const cells = [...app.querySelectorAll("tbody tr")].map((tr) => [...tr.querySelectorAll("td")].map((td) => td.textContent));
+    const cells = [...app.querySelectorAll("tbody tr")].map((tr) =>
+      [...tr.querySelectorAll("td")].map((td) => td.textContent),
+    );
     assert.deepEqual(cells, [
       ["AAA", "0", "", ""],
       ["BBB", "", "false", '{"lot":100}'],
@@ -153,7 +160,9 @@ describe("mountDashboard", () => {
     for (const status of ["error", "forbidden"]) {
       const { api, app } = mount(async (url) => {
         const product = DATA_PRODUCT_CATALOG.find((p) => p.port === Number(new URL(url).port))!;
-        return json(envelope(product.id, [{ coin_id: "blocked-record-marker", record_id: "blocked-record-marker" }], status));
+        return json(
+          envelope(product.id, [{ coin_id: "blocked-record-marker", record_id: "blocked-record-marker" }], status),
+        );
       });
       await api.mountDashboard(app);
       assert.ok(!app.textContent!.includes("blocked-record-marker"), status);
@@ -165,7 +174,8 @@ describe("mountDashboard", () => {
 
   it("renders one card per product and a banner that reflects how many loaded", async () => {
     const { api, app } = mount(async (url) => {
-      if (url.startsWith("http://127.0.0.1:8101/")) return json(envelope("crypto", [{ coin_id: "bitcoin", currency: "usd", price: "1" }]));
+      if (url.startsWith("http://127.0.0.1:8101/"))
+        return json(envelope("crypto", [{ coin_id: "bitcoin", currency: "usd", price: "1" }]));
       return new Response("down", { status: 503 });
     });
 
@@ -184,7 +194,8 @@ describe("mountDashboard", () => {
 
   it("keeps a zero price, change or APY in the card preview", async () => {
     const { api, app } = mount(async (url) => {
-      if (url.startsWith("http://127.0.0.1:8101/")) return json(envelope("crypto", [{ coin_id: "dust", currency: "usd", price: 0 }]));
+      if (url.startsWith("http://127.0.0.1:8101/"))
+        return json(envelope("crypto", [{ coin_id: "dust", currency: "usd", price: 0 }]));
       if (url.includes("/v1/records")) {
         const product = DATA_PRODUCT_CATALOG.find((p) => p.port === Number(new URL(url).port))!;
         return json(envelope(product.id, [{ symbol: "FLAT", price: "10", change_pct: 0, project: "pool", apy: 0 }]));
