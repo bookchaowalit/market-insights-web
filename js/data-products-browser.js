@@ -438,8 +438,8 @@
     }
     if (productId === "seo") {
       if (item.capture_kind === "owned_page_provenance") {
-        var pageStatus = item.page_data_status || (String(item.found).toLowerCase() === "true" ? "reachable" : "unreachable");
-        var httpStatus = item.page_http_status ? " \xB7 HTTP " + item.page_http_status : "";
+        const pageStatus = item.page_data_status || (String(item.found).toLowerCase() === "true" ? "reachable" : "unreachable");
+        const httpStatus = item.page_http_status ? " \xB7 HTTP " + item.page_http_status : "";
         return (item.target_domain || item.keyword || "") + " \xB7 " + pageStatus + httpStatus;
       }
       return (item.keyword || "") + " \xB7 rank " + v(item.best_rank, "\u2014");
