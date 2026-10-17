@@ -1,3 +1,4 @@
+# CI + security baseline (DevSecOps Phase 1). Public repository: GitHub-hosted runners.
 name: CI
 
 on:
@@ -9,21 +10,21 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - name: Typecheck
-        run: npm run typecheck
-      - name: Verify generated browser bundle
-        run: npm run check:browser
-      - name: Contract and browser-bundle tests
-        run: npm test
-      - name: Syntax-check static scripts
-        run: node --check js/data-products-browser.js && node --check scripts/verify-browser-consumers.mjs
+  web:
+    uses: bookchaowalit/platform-ci-workflows/.github/workflows/ci-node.yml@c37ef9d113eefb3ed45429717cb7ca201192c3fc # v1.0.1
+    with:
+      node-version: "22" # engines: node >=22.6
+      # Biome lint/format, typecheck and npm test run by default. Kept from the previous
+      # workflow: the committed browser bundle must match src/, and the static scripts must parse.
+      build-command: |
+        npm run check:browser
+        node --check js/data-products-browser.js
+        node --check scripts/verify-browser-consumers.mjs
+
+  security:
+    uses: bookchaowalit/platform-ci-workflows/.github/workflows/security.yml@c37ef9d113eefb3ed45429717cb7ca201192c3fc # v1.0.1

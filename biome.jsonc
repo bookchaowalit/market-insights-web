@@ -2,8 +2,8 @@
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   // js/data-products-browser.js is generated from src/ (npm run check:browser guards it);
-  // the static HTML pages and archive/ are out of scope.
-  "files": { "includes": ["src/**", "tests/**", "scripts/**", "*.json", "!package-lock.json"] },
+  // the static HTML pages and archive/ are out of scope; renovate.json stays as the shared copy.
+  "files": { "includes": ["src/**", "tests/**", "scripts/**", "*.json", "!package-lock.json", "!renovate.json"] },
   "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2, "lineWidth": 120 },
   "linter": { "enabled": true, "rules": { "preset": "recommended" } },
   // Off for now: sorting imports in src/ changes module evaluation order in the committed
