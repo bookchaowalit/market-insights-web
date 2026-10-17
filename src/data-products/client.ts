@@ -10,13 +10,7 @@
  */
 
 import { DATA_PRODUCT_CATALOG, FREE_ONLY_DEFAULTS, getProduct } from "./catalog.ts";
-import type {
-  ConsumerLoadState,
-  DataProductEnvelope,
-  FetchOptions,
-  ProductLoadResult,
-  DataStatus,
-} from "./types.ts";
+import type { ConsumerLoadState, DataProductEnvelope, FetchOptions, ProductLoadResult, DataStatus } from "./types.ts";
 import { loadFixture as defaultNodeFixtureLoader } from "./node-fixture.ts";
 import { fetchJsonWithTimeout } from "./request.ts";
 
@@ -44,31 +38,17 @@ function configuredBaseUrl(productId: string, fallback: string): string {
                   ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_AI_TOOLS
                   : productId === "news"
                     ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_NEWS
-                  : productId === "discovery"
-                    ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DISCOVERY
-                  : undefined;
+                    : productId === "discovery"
+                      ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DISCOVERY
+                      : undefined;
   return configured?.trim() || fallback;
 }
 
-const ENVELOPE_KEYS = [
-  "schema_version",
-  "source",
-  "retrieved_at",
-  "data_status",
-  "items",
-  "next_cursor",
-] as const;
+const ENVELOPE_KEYS = ["schema_version", "source", "retrieved_at", "data_status", "items", "next_cursor"] as const;
 
 /** Safe, non-secret messages for UI and logs. Never include raw provider/network payloads. */
 export function sanitizeUserFacingMessage(
-  kind:
-    | "timeout"
-    | "unavailable"
-    | "http"
-    | "invalid_envelope"
-    | "unknown_product"
-    | "fixture_failed"
-    | "generic",
+  kind: "timeout" | "unavailable" | "http" | "invalid_envelope" | "unknown_product" | "fixture_failed" | "generic",
   detail?: { status?: number; productId?: string; usingFixture?: boolean },
 ): string {
   const fixtureSuffix = detail?.usingFixture ? "; using fixture fallback" : "";
@@ -97,31 +77,47 @@ export function isDataProductEnvelope(value: unknown): value is DataProductEnvel
     if (!(key in obj)) return false;
   }
   return (
-    typeof obj.schema_version === "string" && obj.schema_version.trim().length > 0 &&
-    typeof obj.source === "string" && obj.source.trim().length > 0 &&
-    typeof obj.retrieved_at === "string" && Number.isFinite(Date.parse(obj.retrieved_at)) &&
-    typeof obj.data_status === "string" && DATA_STATUSES.includes(obj.data_status as DataStatus) &&
-    Array.isArray(obj.items) && obj.items.every((item) =>
-      item !== null && typeof item === "object" && !Array.isArray(item)) &&
+    typeof obj.schema_version === "string" &&
+    obj.schema_version.trim().length > 0 &&
+    typeof obj.source === "string" &&
+    obj.source.trim().length > 0 &&
+    typeof obj.retrieved_at === "string" &&
+    Number.isFinite(Date.parse(obj.retrieved_at)) &&
+    typeof obj.data_status === "string" &&
+    DATA_STATUSES.includes(obj.data_status as DataStatus) &&
+    Array.isArray(obj.items) &&
+    obj.items.every((item) => item !== null && typeof item === "object" && !Array.isArray(item)) &&
     (obj.next_cursor === null || typeof obj.next_cursor === "string")
   );
 }
 
 const DATA_STATUSES: readonly DataStatus[] = [
-  "ok", "empty", "stale", "malformed", "not_found", "forbidden", "error", "accepted",
+  "ok",
+  "empty",
+  "stale",
+  "malformed",
+  "not_found",
+  "forbidden",
+  "error",
+  "accepted",
 ];
 
 function stateFromEnvelope(envelope: DataProductEnvelope): ConsumerLoadState {
   switch (envelope.data_status) {
-    case "ok": return envelope.items.length === 0 ? "empty" : "ready";
-    case "empty": return "empty";
-    case "stale": return "stale";
+    case "ok":
+      return envelope.items.length === 0 ? "empty" : "ready";
+    case "empty":
+      return "empty";
+    case "stale":
+      return "stale";
     case "not_found":
-    case "accepted": return "unavailable";
+    case "accepted":
+      return "unavailable";
     case "malformed":
     case "forbidden":
     case "error":
-    default: return "error";
+    default:
+      return "error";
   }
 }
 
@@ -154,17 +150,16 @@ function baseResult(
     freeOnly: true,
     allowExternalWrites: false,
     ...partial,
-    ...(suppressEnvelope ? {
-      envelope: null,
-      errorMessage: partial.errorMessage ?? sanitizeUserFacingMessage("generic"),
-    } : {}),
+    ...(suppressEnvelope
+      ? {
+          envelope: null,
+          errorMessage: partial.errorMessage ?? sanitizeUserFacingMessage("generic"),
+        }
+      : {}),
   };
 }
 
-export async function fetchProductRecords(
-  productId: string,
-  options: FetchOptions = {},
-): Promise<ProductLoadResult> {
+export async function fetchProductRecords(productId: string, options: FetchOptions = {}): Promise<ProductLoadResult> {
   const product = getProduct(productId);
   if (!product) {
     return baseResult(productId, {
@@ -231,11 +226,16 @@ export async function fetchProductRecords(
   }
 
   try {
-    const { response, body } = await fetchJsonWithTimeout(url, {
-      method: "GET",
-      headers: { Accept: "application/json" },
-      signal: options.signal,
-    }, timeoutMs, fetchImpl);
+    const { response, body } = await fetchJsonWithTimeout(
+      url,
+      {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        signal: options.signal,
+      },
+      timeoutMs,
+      fetchImpl,
+    );
 
     if (!response.ok) {
       try {
@@ -298,12 +298,8 @@ export async function fetchProductRecords(
   }
 }
 
-export async function fetchAllProducts(
-  options: FetchOptions = {},
-): Promise<ProductLoadResult[]> {
-  const results = await Promise.all(
-    DATA_PRODUCT_CATALOG.map((p) => fetchProductRecords(p.id, options)),
-  );
+export async function fetchAllProducts(options: FetchOptions = {}): Promise<ProductLoadResult[]> {
+  const results = await Promise.all(DATA_PRODUCT_CATALOG.map((p) => fetchProductRecords(p.id, options)));
   return results;
 }
 
@@ -329,10 +325,16 @@ export async function fetchProductHealth(
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   const timeoutMs = options.timeoutMs ?? 2000;
   try {
-    const { response, body } = await fetchJsonWithTimeout(`${baseUrl}/healthz`, {
-      method: "GET",
-      signal: options.signal,
-    }, timeoutMs, fetchImpl, true);
+    const { response, body } = await fetchJsonWithTimeout(
+      `${baseUrl}/healthz`,
+      {
+        method: "GET",
+        signal: options.signal,
+      },
+      timeoutMs,
+      fetchImpl,
+      true,
+    );
     return { ok: response.ok, body };
   } catch {
     return {

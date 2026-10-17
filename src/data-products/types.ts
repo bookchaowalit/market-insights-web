@@ -1,14 +1,6 @@
 /** Shared envelope and consumer-side status types for data-product APIs. */
 
-export type DataStatus =
-  | "ok"
-  | "empty"
-  | "stale"
-  | "malformed"
-  | "not_found"
-  | "forbidden"
-  | "error"
-  | "accepted";
+export type DataStatus = "ok" | "empty" | "stale" | "malformed" | "not_found" | "forbidden" | "error" | "accepted";
 
 export interface DataProductEnvelope<T = Record<string, unknown>> {
   schema_version: string;
@@ -21,14 +13,7 @@ export interface DataProductEnvelope<T = Record<string, unknown>> {
   detail?: string;
 }
 
-export type ConsumerLoadState =
-  | "loading"
-  | "ready"
-  | "empty"
-  | "stale"
-  | "timeout"
-  | "unavailable"
-  | "error";
+export type ConsumerLoadState = "loading" | "ready" | "empty" | "stale" | "timeout" | "unavailable" | "error";
 
 export interface ProductDefinition {
   id: string;

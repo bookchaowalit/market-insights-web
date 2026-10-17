@@ -59,7 +59,10 @@ function loadBundle(
 function fixtureOrApi(apiResponse: () => Response) {
   return async (url: string) => {
     if (url.startsWith("fixtures/")) {
-      const id = url.split("/").pop()!.replace(/\.json$/, "");
+      const id = url
+        .split("/")
+        .pop()!
+        .replace(/\.json$/, "");
       return new Response(await fixtureText(id), { status: 200 });
     }
     return apiResponse();
@@ -69,10 +72,7 @@ function fixtureOrApi(apiResponse: () => Response) {
 describe("browser bundle parity", () => {
   it("catalog matches the typed catalog exactly", () => {
     const { api } = loadBundle(async () => new Response("{}"));
-    assert.deepEqual(
-      JSON.parse(JSON.stringify(api.CATALOG)),
-      JSON.parse(JSON.stringify(DATA_PRODUCT_CATALOG)),
-    );
+    assert.deepEqual(JSON.parse(JSON.stringify(api.CATALOG)), JSON.parse(JSON.stringify(DATA_PRODUCT_CATALOG)));
     assert.equal(api.FREE_ONLY, true);
     assert.equal(api.ALLOW_EXTERNAL_WRITES, false);
     assert.equal(api.ALLOW_PAID_PROVIDERS, false);
@@ -90,9 +90,12 @@ describe("browser fetchProductRecords", () => {
   it("uses the typed validation and failure state rules", async () => {
     const fixture = JSON.parse(await fixtureText("crypto"));
     for (const fields of [
-      { data_status: "error" }, { data_status: "forbidden" },
-      { data_status: "unknown" }, { retrieved_at: null },
-      { next_cursor: 42 }, { schema_version: "stock.v1" },
+      { data_status: "error" },
+      { data_status: "forbidden" },
+      { data_status: "unknown" },
+      { retrieved_at: null },
+      { next_cursor: 42 },
+      { schema_version: "stock.v1" },
     ]) {
       const { api } = loadBundle(async () => new Response(JSON.stringify({ ...fixture, ...fields })));
       const result = await api.fetchProductRecords("crypto", { useFixtures: false });
@@ -101,9 +104,7 @@ describe("browser fetchProductRecords", () => {
   });
 
   it("bounds hanging JSON in both API and fixture responses", { timeout: 1000 }, async () => {
-    const { api } = loadBundle(async () =>
-      ({ ok: true, json: () => new Promise(() => {}) }) as Response,
-    );
+    const { api } = loadBundle(async () => ({ ok: true, json: () => new Promise(() => {}) }) as Response);
     const result = await api.fetchProductRecords("crypto", { useFixtures: false, timeoutMs: 10 });
     assert.equal(result.state, "timeout");
     assert.equal(result.source, "none");
@@ -130,9 +131,7 @@ describe("browser fetchProductRecords", () => {
   });
 
   it("falls back to fixtures on HTTP errors with a sanitized message", async () => {
-    const { api } = loadBundle(
-      fixtureOrApi(() => new Response("Traceback: secret stack", { status: 503 })),
-    );
+    const { api } = loadBundle(fixtureOrApi(() => new Response("Traceback: secret stack", { status: 503 })));
     const result = await api.fetchProductRecords("stocks", { useFixtures: false });
     assert.equal(result.source, "fixture");
     assert.equal(result.errorMessage, "Local API returned HTTP 503; using fixture fallback");

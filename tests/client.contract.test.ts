@@ -18,10 +18,7 @@ import type { DataProductEnvelope } from "../src/data-products/types.ts";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 async function loadFixture(productId: string): Promise<DataProductEnvelope> {
-  const raw = await readFile(
-    join(root, "fixtures", "data-products", `${productId}.json`),
-    "utf8",
-  );
+  const raw = await readFile(join(root, "fixtures", "data-products", `${productId}.json`), "utf8");
   return JSON.parse(raw) as DataProductEnvelope;
 }
 
@@ -88,14 +85,7 @@ describe("envelope contract", () => {
       assert.equal(env.source, product.repo);
       assert.ok(Array.isArray(env.items));
       assert.ok(env.items.length > 0, "sanitized fixtures should be non-empty");
-      for (const key of [
-        "schema_version",
-        "source",
-        "retrieved_at",
-        "data_status",
-        "items",
-        "next_cursor",
-      ]) {
+      for (const key of ["schema_version", "source", "retrieved_at", "data_status", "items", "next_cursor"]) {
         assert.ok(key in env, `missing ${key}`);
       }
       // Fixtures must not look like paid-provider or secret material.
@@ -119,10 +109,7 @@ describe("sanitizeUserFacingMessage", () => {
       sanitizeUserFacingMessage("http", { status: 503, usingFixture: true }),
       "Local API returned HTTP 503; using fixture fallback",
     );
-    assert.equal(
-      sanitizeUserFacingMessage("invalid_envelope"),
-      "Response is not a versioned data-product envelope",
-    );
+    assert.equal(sanitizeUserFacingMessage("invalid_envelope"), "Response is not a versioned data-product envelope");
     assert.equal(sanitizeUserFacingMessage("fixture_failed"), "Offline fixture unavailable");
   });
 });
@@ -135,7 +122,11 @@ describe("fetchProductRecords", () => {
         useFixtures: false,
         fetchImpl: async () => new Response(JSON.stringify({ ...fixture, data_status })),
       });
-      assert.equal(result.state, data_status === "not_found" || data_status === "accepted" ? "unavailable" : "error", data_status);
+      assert.equal(
+        result.state,
+        data_status === "not_found" || data_status === "accepted" ? "unavailable" : "error",
+        data_status,
+      );
       assert.equal(result.envelope, null, data_status);
       assert.equal(result.errorMessage, "Unable to load data product", data_status);
     }
@@ -159,10 +150,16 @@ describe("fetchProductRecords", () => {
   it("rejects invalid envelope fields and the wrong product schema", async () => {
     const fixture = await loadFixture("crypto");
     for (const fields of [
-      { schema_version: "stock.v1" }, { schema_version: "" }, { source: "" },
-      { retrieved_at: null }, { retrieved_at: "not-a-date" },
-      { data_status: "unknown" }, { data_status: null }, { next_cursor: 42 },
-      { items: [null] }, { items: ["record"] },
+      { schema_version: "stock.v1" },
+      { schema_version: "" },
+      { source: "" },
+      { retrieved_at: null },
+      { retrieved_at: "not-a-date" },
+      { data_status: "unknown" },
+      { data_status: null },
+      { next_cursor: 42 },
+      { items: [null] },
+      { items: ["record"] },
     ]) {
       const result = await fetchProductRecords("crypto", {
         useFixtures: false,
@@ -180,7 +177,10 @@ describe("fetchProductRecords", () => {
       return { ok: true, json: () => new Promise(() => {}) } as Response;
     };
     const result = await fetchProductRecords("crypto", {
-      useFixtures: false, fetchImpl, loadFixture, timeoutMs: 10,
+      useFixtures: false,
+      fetchImpl,
+      loadFixture,
+      timeoutMs: 10,
     });
     assert.equal(signal?.aborted, true);
     assert.equal(result.state, "timeout");
@@ -245,8 +245,7 @@ describe("fetchProductRecords", () => {
       next_cursor: null,
     };
     const fetchImpl = mockFetch({
-      "127.0.0.1:8103/v1/records": () =>
-        new Response(JSON.stringify(empty), { status: 200 }),
+      "127.0.0.1:8103/v1/records": () => new Response(JSON.stringify(empty), { status: 200 }),
     });
     const result = await fetchProductRecords("fx", {
       useFixtures: false,
@@ -260,8 +259,7 @@ describe("fetchProductRecords", () => {
     const fixture = await loadFixture("defi");
     const stale = { ...fixture, data_status: "stale" };
     const fetchImpl = mockFetch({
-      "127.0.0.1:8104/v1/records": () =>
-        new Response(JSON.stringify(stale), { status: 200 }),
+      "127.0.0.1:8104/v1/records": () => new Response(JSON.stringify(stale), { status: 200 }),
     });
     const result = await fetchProductRecords("defi", {
       useFixtures: false,
@@ -332,8 +330,7 @@ describe("fetchProductRecords", () => {
 
   it("rejects non-envelope API payloads", async () => {
     const fetchImpl = mockFetch({
-      "127.0.0.1:8101/v1/records": () =>
-        new Response(JSON.stringify({ rows: [] }), { status: 200 }),
+      "127.0.0.1:8101/v1/records": () => new Response(JSON.stringify({ rows: [] }), { status: 200 }),
     });
     const result = await fetchProductRecords("crypto", {
       useFixtures: false,
@@ -376,10 +373,7 @@ describe("fetchProductRecords", () => {
   });
 
   it("does not expose scraper legacy paths or paid-provider hooks", async () => {
-    const src = await readFile(
-      join(root, "src", "data-products", "client.ts"),
-      "utf8",
-    );
+    const src = await readFile(join(root, "src", "data-products", "client.ts"), "utf8");
     assert.equal(src.includes("book-finance/data"), false);
     assert.equal(src.includes("book-scraping"), false);
     assert.equal(src.includes("scrape_"), false);
@@ -426,10 +420,7 @@ describe("fetchProductRecords", () => {
       loadFixture,
       fetchImpl: mockFetch({
         "127.0.0.1:8102/v1/records": async () =>
-          new Response(
-            JSON.stringify({ ...(await loadFixture("stocks")), data_status: "stale" }),
-            { status: 200 },
-          ),
+          new Response(JSON.stringify({ ...(await loadFixture("stocks")), data_status: "stale" }), { status: 200 }),
       }),
     });
     assert.equal(stale.state, "stale");
