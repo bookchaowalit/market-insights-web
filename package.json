@@ -20,5 +20,8 @@
   },
   "engines": {
     "node": ">=22.6"
+  },
+  "dependencies": {
+    "@sentry/browser": "^11.8.0"
   }
 }
