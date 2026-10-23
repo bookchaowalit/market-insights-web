@@ -1,6 +1,6 @@
 # Solo Empire Insights
 
-Consumer application for the seven frozen free-only **data-product APIs** plus
+Consumer application for the six frozen (v3) free-only **data-product APIs** plus
 the additive `news.v1` and `discovery.v1` APIs.
 
 This repo no longer scrapes upstream providers and does not import legacy
@@ -19,7 +19,6 @@ scraper modules or read legacy scraper CSV paths. It only:
 | DeFi | 8104 | `defi.v1` | `book-defi-data` |
 | Flights | 8105 | `flight.v1` | `book-flight-data` |
 | SEO | 8106 | `seo.v1` | `book-seo-data` |
-| AI Tools | 8107 | `ai_tools.v1` | `book-ai-tools-data` |
 | News Signals | 8108 | `news.v1` | `book-news-scraping` |
 | Technology Discovery | 8110 | `discovery.v1` | `book-discovery-data` |
 
@@ -75,10 +74,12 @@ unless replay explicitly receives `--update-lineage` after reconciliation.
 The helper imports existing captures only: it does not schedule upstream
 collection. Run it again after the approved scrapers update their exports.
 
-Flights and AI tools may return empty on this isolated stack. Flights require
-a permitted source. SEO is now mapped as owned-page provenance: reachability,
-title, canonical URL, HTTP status, and capture time; it does not claim SERP
-rankings. AI tools still require reuse permission review.
+Flights may return empty on this isolated stack: they require a permitted
+source. SEO is now mapped as owned-page provenance: reachability, title,
+canonical URL, HTTP status, and capture time; it does not claim SERP rankings.
+The former AI tools product (`ai_tools.v1`, port 8107) was retired on
+2026-10-23 (contract freeze `data-product-contracts-v3`); port 8107 is not
+reassigned.
 Jobs use a separate internal ingestion workflow. API health alone does not
 mean these products contain usable data. `--validate-only --product seo`
 checks file structure without granting publication permission.
@@ -88,7 +89,7 @@ For the internal Jobs data boundary, use `task scraping:jobs:ingest --
 `task data:job:readiness -- --data-lake-uri
 $(pwd)/data/lake-local/scraping-captures-v2 --dataset job_postings --dataset
 job_matches --dataset job_leads`. Jobs are served on `:8109` with `job.v1`;
-they are not included in this public seven-product UI because the contract is
+they are not included in this public eight-product UI because the contract is
 classified `internal` and may contain contact/application fields.
 
 An immutable-batch conflict is a failed replay, not a successful refresh.
@@ -99,7 +100,7 @@ For a hosted frontend, set URL-only public variables in the frontend runtime:
 `NEXT_PUBLIC_DATA_PRODUCT_URL_CRYPTO`, `NEXT_PUBLIC_DATA_PRODUCT_URL_STOCKS`,
 `NEXT_PUBLIC_DATA_PRODUCT_URL_FX`, `NEXT_PUBLIC_DATA_PRODUCT_URL_DEFI`,
 `NEXT_PUBLIC_DATA_PRODUCT_URL_FLIGHTS`, `NEXT_PUBLIC_DATA_PRODUCT_URL_SEO`,
-`NEXT_PUBLIC_DATA_PRODUCT_URL_AI_TOOLS`, `NEXT_PUBLIC_DATA_PRODUCT_URL_NEWS`, and
+`NEXT_PUBLIC_DATA_PRODUCT_URL_NEWS`, and
 `NEXT_PUBLIC_DATA_PRODUCT_URL_DISCOVERY`. Keep API tokens server-side; all
 domain APIs are read-only and still require their own lake configuration.
 The static HTML consumer accepts the equivalent URL-only map as

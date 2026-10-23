@@ -1,10 +1,11 @@
 /**
- * Compatibility freeze test against data-product v2 contracts.
- * SSOT: solo-empire systems/architecture/data-product-contracts-v2.yaml
+ * Compatibility freeze test against data-product v3 contracts.
+ * SSOT: architecture-docs systems/architecture/data-product-contracts-v3.yaml
+ * (freeze_id data-product-contracts-v3; ai_tools.v1 on port 8107 retired 2026-10-23, port not reassigned).
  * Breaking changes require a new schema_version (e.g. crypto.v2).
  */
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -13,7 +14,7 @@ import { DATA_PRODUCT_CATALOG, FREE_ONLY_DEFAULTS, isDataProductEnvelope } from 
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-/** Frozen v2 map — must match systems/architecture/data-product-contracts-v2.yaml */
+/** Frozen v3 map — must match systems/architecture/data-product-contracts-v3.yaml */
 const FROZEN = [
   { id: "crypto", port: 8101, schemaVersion: "crypto.v1", repo: "book-crypto-data" },
   { id: "stocks", port: 8102, schemaVersion: "stock.v1", repo: "book-stock-data" },
@@ -21,15 +22,14 @@ const FROZEN = [
   { id: "defi", port: 8104, schemaVersion: "defi.v1", repo: "book-defi-data" },
   { id: "flights", port: 8105, schemaVersion: "flight.v1", repo: "book-flight-data" },
   { id: "seo", port: 8106, schemaVersion: "seo.v1", repo: "book-seo-data" },
-  { id: "ai_tools", port: 8107, schemaVersion: "ai_tools.v1", repo: "book-ai-tools-data" },
 ] as const;
 
 const ENVELOPE_KEYS = ["schema_version", "source", "retrieved_at", "data_status", "items", "next_cursor"] as const;
 
 describe("data-product v1 contract freeze (insights consumer)", () => {
   it("catalog matches frozen ports and schema_version values", () => {
-    // v2 remains a seven-product freeze; news.v1 and discovery.v1 are additive domain extensions.
-    assert.equal(DATA_PRODUCT_CATALOG.length, 9);
+    // v3 is a six-product freeze; news.v1 and discovery.v1 are additive domain extensions.
+    assert.equal(DATA_PRODUCT_CATALOG.length, 8);
     for (const frozen of FROZEN) {
       const product = DATA_PRODUCT_CATALOG.find((p) => p.id === frozen.id);
       assert.ok(product, `missing product ${frozen.id}`);
@@ -38,10 +38,7 @@ describe("data-product v1 contract freeze (insights consumer)", () => {
       assert.equal(product.repo, frozen.repo);
       assert.equal(product.baseUrl, `http://127.0.0.1:${frozen.port}`);
     }
-    assert.deepEqual(
-      DATA_PRODUCT_CATALOG.map((p) => p.port).sort(),
-      [8101, 8102, 8103, 8104, 8105, 8106, 8107, 8108, 8110],
-    );
+    assert.deepEqual(DATA_PRODUCT_CATALOG.map((p) => p.port).sort(), [8101, 8102, 8103, 8104, 8105, 8106, 8108, 8110]);
     const news = DATA_PRODUCT_CATALOG.find((p) => p.id === "news");
     assert.deepEqual(news && { port: news.port, schemaVersion: news.schemaVersion }, {
       port: 8108,
@@ -95,6 +92,30 @@ describe("data-product v1 contract freeze (insights consumer)", () => {
       for (const key of ENVELOPE_KEYS) {
         assert.ok(key in env, `${frozen.id} fixture missing ${key}`);
       }
+    }
+  });
+
+  it("retired ai_tools.v1 (port 8107) is gone from the live site", async () => {
+    assert.equal(
+      DATA_PRODUCT_CATALOG.some((p) => p.id === "ai_tools" || p.port === 8107),
+      false,
+    );
+    const browser = await readFile(join(root, "js/data-products-browser.js"), "utf8");
+    assert.equal(/ai_tools|8107/.test(browser), false, "browser bundle still references ai_tools");
+    const summary = JSON.parse(await readFile(join(root, "fixtures/data-products/summary.json"), "utf8")) as {
+      products: { id: string; port: number }[];
+    };
+    assert.equal(
+      summary.products.some((p) => p.id === "ai_tools" || p.port === 8107),
+      false,
+    );
+    await assert.rejects(access(join(root, "ai_tools.html")));
+    await assert.rejects(access(join(root, "fixtures/data-products/ai_tools.json")));
+    const pages = (await readdir(root)).filter((f) => f.endsWith(".html"));
+    assert.ok(pages.length >= 8);
+    for (const page of pages) {
+      const html = await readFile(join(root, page), "utf8");
+      assert.equal(html.includes("ai_tools.html"), false, `${page} still links ai_tools.html`);
     }
   });
 });

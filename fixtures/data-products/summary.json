@@ -75,18 +75,6 @@
       "data_status": "stale",
       "retrieved_at": "2026-08-01T12:00:00Z",
       "status": "fixture"
-    },
-    {
-      "id": "ai_tools",
-      "name": "AI Tools",
-      "icon": "\ud83e\udd16",
-      "repo": "book-ai-tools-data",
-      "port": 8107,
-      "schema_version": "ai_tools.v1",
-      "record_count": 2,
-      "data_status": "stale",
-      "retrieved_at": "2026-08-01T12:00:00Z",
-      "status": "fixture"
     }
   ]
 }

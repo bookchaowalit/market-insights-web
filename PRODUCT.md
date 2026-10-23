@@ -1,13 +1,15 @@
 # Solo Empire Insights (market-insights-web) — Product
 
-*Tier B showcase. Last checked against the code on 2026-10-22.*
+*Tier B showcase. Last checked against the code on 2026-10-23.*
 
 ## What it is
 
 A static multi-page website (plain HTML, CSS and one generated JavaScript bundle) that reads the Solo Empire
 **data-product APIs** and shows their status and records: crypto, stocks, FX, DeFi, flights, SEO page provenance,
-AI tools, news signals and technology discovery. Each product is a separate read-only API on a local port
-(8101–8108, 8110). When an API cannot be reached, the page falls back to sanitized fixture envelopes in
+news signals and technology discovery (8 products). Each product is a separate read-only API on a local port
+(8101–8106, 8108, 8110), matching the contract freeze `data-product-contracts-v3` (architecture-docs
+`systems/architecture/data-product-contracts-v3.yaml`). The former AI tools product (`ai_tools.v1`, port 8107) was
+retired on 2026-10-23; its page and fixture were removed and port 8107 is not reused. When an API cannot be reached, the page falls back to sanitized fixture envelopes in
 `fixtures/data-products/` and says so on screen ("offline fixture", "Local API unavailable").
 
 The typed client in `src/data-products/` owns the product catalog, envelope validation, state mapping and request
@@ -26,7 +28,7 @@ of a contract-first consumer. It has no external users, no accounts and no reven
   their records.
 - Read-only: `GET /v1/records` and health reads only; no refresh, no writes, no paid providers, no scraping.
 - Offline demo with `?fixtures=1`.
-- Tests (node:test, 7 files, 85 tests): contract freeze, typed client contract, browser bundle in a sandbox, DOM states in
+- Tests (node:test, 7 files, 84 tests): contract freeze, typed client contract, browser bundle in a sandbox, DOM states in
   happy-dom, static asset references, Sentry options/scrubbing and the monitoring bundle.
 - CI: shared `ci-node.yml` + `security.yml` v1.1.1 (Biome, typecheck, tests required, bundle freshness check).
 - Error reporting: `@sentry/browser`, errors only, personal data scrubbed (see below). **Not wired to a DSN**.
@@ -34,8 +36,8 @@ of a contract-first consumer. It has no external users, no accounts and no reven
 ## What does not work / is not claimed
 
 - No hosted data. The public page cannot reach anyone's local APIs, so a visitor always sees the fixtures
-  (dated 2026-08 / 2026-09, marked stale). Flights and AI tools may also be empty on a real local stack (source
-  permission pending).
+  (dated 2026-08 / 2026-09, marked stale). Flights may also be empty on a real local stack (source permission
+  pending).
 - SEO shows owned-page provenance (reachability, title, HTTP status), not search rankings.
 - No analytics. No production users. No SLA.
 - The README's "hosted frontend" paragraph names `NEXT_PUBLIC_*` variables; this is not a Next.js app — the static

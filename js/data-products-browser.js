@@ -59,15 +59,6 @@
       baseUrl: "http://127.0.0.1:8106"
     },
     {
-      id: "ai_tools",
-      title: "AI Tools",
-      icon: "\u{1F916}",
-      repo: "book-ai-tools-data",
-      schemaVersion: "ai_tools.v1",
-      port: 8107,
-      baseUrl: "http://127.0.0.1:8107"
-    },
-    {
       id: "news",
       title: "News Signals",
       icon: "\u{1F4F0}",
@@ -148,7 +139,7 @@
   // src/data-products/client.ts
   function configuredBaseUrl(productId, fallback) {
     if (typeof process === "undefined" || !process.env) return fallback;
-    const configured = productId === "crypto" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_CRYPTO : productId === "stocks" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_STOCKS : productId === "fx" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_FX : productId === "defi" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DEFI : productId === "flights" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_FLIGHTS : productId === "seo" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_SEO : productId === "ai_tools" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_AI_TOOLS : productId === "news" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_NEWS : productId === "discovery" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DISCOVERY : void 0;
+    const configured = productId === "crypto" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_CRYPTO : productId === "stocks" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_STOCKS : productId === "fx" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_FX : productId === "defi" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DEFI : productId === "flights" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_FLIGHTS : productId === "seo" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_SEO : productId === "news" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_NEWS : productId === "discovery" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DISCOVERY : void 0;
     return configured?.trim() || fallback;
   }
   var ENVELOPE_KEYS = ["schema_version", "source", "retrieved_at", "data_status", "items", "next_cursor"];
@@ -446,9 +437,6 @@
         return (item.target_domain || item.keyword || "") + " \xB7 " + pageStatus + httpStatus;
       }
       return (item.keyword || "") + " \xB7 rank " + v(item.best_rank, "\u2014");
-    }
-    if (productId === "ai_tools") {
-      return (item.name || "") + " \xB7 " + (item.source || "");
     }
     if (productId === "news") {
       return (item.headline || item.title || "") + " \xB7 " + (item.publisher || item.source || "");

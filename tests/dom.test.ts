@@ -178,7 +178,7 @@ describe("mountDashboard", () => {
       await api.mountDashboard(app);
       assert.ok(!app.textContent!.includes("blocked-record-marker"), status);
       assert.equal(app.querySelectorAll("li").length, 0, status);
-      assert.match(app.querySelector(".status-banner")!.textContent!, /^0\/9 products loaded/, status);
+      assert.match(app.querySelector(".status-banner")!.textContent!, /^0\/8 products loaded/, status);
       assert.match(app.querySelector(".status-banner")!.className, /\bbad\b/, status);
     }
   });
@@ -193,12 +193,12 @@ describe("mountDashboard", () => {
     await api.mountDashboard(app);
 
     const cards = app.querySelectorAll("article.card");
-    assert.equal(cards.length, 9);
+    assert.equal(cards.length, 8);
     assert.match(app.querySelector("#card-crypto .badge")!.textContent!, /Ready · local API/);
     assert.match(app.querySelector("#card-crypto li")!.textContent!, /bitcoin · usd · 1/);
     assert.match(app.querySelector("#card-fx .body")!.textContent!, /Local API returned HTTP 503/);
     const banner = app.querySelector(".status-banner")!;
-    assert.match(banner.textContent!, /^1\/9 products loaded/);
+    assert.match(banner.textContent!, /^1\/8 products loaded/);
     assert.match(banner.className, /\bwarn\b/, "a partial load must not look fully healthy");
     assert.equal(app.getAttribute("aria-busy"), "false");
   });

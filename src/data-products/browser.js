@@ -111,9 +111,6 @@ function renderItemPreview(productId, item) {
     }
     return (item.keyword || "") + " · rank " + v(item.best_rank, "—");
   }
-  if (productId === "ai_tools") {
-    return (item.name || "") + " · " + (item.source || "");
-  }
   if (productId === "news") {
     return (item.headline || item.title || "") + " · " + (item.publisher || item.source || "");
   }

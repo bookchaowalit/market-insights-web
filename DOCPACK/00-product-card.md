@@ -13,7 +13,7 @@ owner: Product owner (Book Dev)
 
 ## 1. สรุปคุณค่าในหนึ่งประโยค
 
-หน้าเว็บ static ที่แสดงข้อมูลจาก data product ของ Solo Empire 9 ตัว (crypto, stock, FX, DeFi, flight, SEO, AI tools, news, discovery) ผ่าน API อ่านอย่างเดียวในเครื่อง หรือ fixture สำหรับ demo offline
+หน้าเว็บ static ที่แสดงข้อมูลจาก data product ของ Solo Empire 8 ตัว (crypto, stock, FX, DeFi, flight, SEO, news, discovery; AI tools ปลดระวางแล้ว 2026-10-23 ตาม contract freeze `data-product-contracts-v3`) ผ่าน API อ่านอย่างเดียวในเครื่อง หรือ fixture สำหรับ demo offline
 
 ## 2. ปัญหาและผู้ใช้เป้าหมาย
 
@@ -23,7 +23,7 @@ owner: Product owner (Book Dev)
 ## 3. สิ่งที่ทำได้จริงตอนนี้
 
 - หน้า HTML ต่อโดเมน (`crypto.html`, `stocks.html`, `fx.html` ฯลฯ) + `js/data-products-browser.js` ที่ build จาก TypeScript
-- เรียก API port 8101–8110 หรือใช้ `?fixtures=1` สำหรับ demo offline; ไม่ scrape เองและไม่อ่าน CSV เก่า
+- เรียก API port 8101–8106, 8108, 8110 หรือใช้ `?fixtures=1` สำหรับ demo offline; ไม่ scrape เองและไม่อ่าน CSV เก่า
 - test 5 ไฟล์ (contract freeze, DOM, browser bundle, static site)
 - หน้าเก่า (property, jobs, opportunities) ย้ายไป `archive/legacy-static/`
 

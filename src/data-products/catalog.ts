@@ -57,15 +57,6 @@ export const DATA_PRODUCT_CATALOG: readonly ProductDefinition[] = [
     baseUrl: "http://127.0.0.1:8106",
   },
   {
-    id: "ai_tools",
-    title: "AI Tools",
-    icon: "🤖",
-    repo: "book-ai-tools-data",
-    schemaVersion: "ai_tools.v1",
-    port: 8107,
-    baseUrl: "http://127.0.0.1:8107",
-  },
-  {
     id: "news",
     title: "News Signals",
     icon: "📰",
