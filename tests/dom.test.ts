@@ -81,6 +81,17 @@ describe("mountProductPage", () => {
     assert.equal(app.querySelectorAll("tbody tr").length, 1);
   });
 
+  it("makes the scrollable records table reachable and named for keyboard users", async () => {
+    const { api, app } = mount(async () => json(envelope("crypto", [{ coin_id: "bitcoin", price: "65000" }])));
+
+    await api.mountProductPage("crypto", app);
+
+    const wrap = app.querySelector(".table-wrap")!;
+    assert.equal(wrap.getAttribute("tabindex"), "0");
+    assert.equal(wrap.getAttribute("role"), "region");
+    assert.equal(wrap.getAttribute("aria-label"), "crypto records");
+  });
+
   it("escapes item keys and values instead of injecting markup", async () => {
     const hostile = '<img src=x onerror="alert(1)">';
     const { api, app } = mount(async () => json(envelope("news", [{ [hostile]: hostile, title: "a'b" }])));

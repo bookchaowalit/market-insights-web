@@ -16,7 +16,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .card{background:var(--card);border:1px solid var(--border);border-radius:.9rem;padding:1rem 1.1rem}
 .card h3{font-size:1rem;margin-bottom:.25rem}
 .card .meta{font-size:.75rem;color:var(--muted);margin-bottom:.6rem}
-.badge{display:inline-block;padding:.2rem .55rem;border-radius:999px;font-size:.72rem;font-weight:600;margin-bottom:.6rem}
+.badge{display:inline-block;padding:.2rem .55rem;border-radius:999px;font-size:.75rem;font-weight:600;margin-bottom:.6rem}
 .badge.ok{background:rgba(16,185,129,.18);color:#34d399}
 .badge.warn{background:rgba(245,158,11,.18);color:#fbbf24}
 .badge.bad{background:rgba(239,68,68,.18);color:#f87171}
@@ -37,4 +37,6 @@ ul{margin-left:1.1rem;font-size:.9rem}
 .footer{text-align:center;padding:1.5rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);margin-top:2rem}
 .policy{font-size:.8rem;color:var(--muted);margin:.75rem 0 1rem}
 .policy code{background:rgba(255,255,255,.06);padding:.1rem .35rem;border-radius:.3rem}
+a{color:#93c5fd}
 a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.table-wrap:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

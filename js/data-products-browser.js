@@ -556,7 +556,8 @@
         return "<td>" + escapeHtml(displayValue(item[h])) + "</td>";
       }).join("") + "</tr>";
     }).join("");
-    body.innerHTML = envelopeMeta + "<div class='table-wrap'><table class='data-table'><caption class='sr-only'>" + escapeHtml(productId) + " records</caption><thead><tr>" + head + "</tr></thead><tbody>" + rows + "</tbody></table></div>" + note;
+    body.innerHTML = envelopeMeta + // Focusable and named so keyboard users can scroll a table wider than the screen.
+    "<div class='table-wrap' tabindex='0' role='region' aria-label='" + escapeHtml(productId) + " records'><table class='data-table'><caption class='sr-only'>" + escapeHtml(productId) + " records</caption><thead><tr>" + head + "</tr></thead><tbody>" + rows + "</tbody></table></div>" + note;
     root.setAttribute("aria-busy", "false");
   }
   global.DataProducts = {
