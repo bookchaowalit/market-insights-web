@@ -113,6 +113,36 @@ describe("scrubEvent", () => {
     assert.doesNotMatch(JSON.stringify(event), /private/);
   });
 
+  it("strips query strings and hashes from URLs in messages, frames and debug images", () => {
+    const event = scrubEvent({
+      exception: {
+        values: [
+          {
+            value:
+              "Failed to fetch http://127.0.0.1:8101/v1/records?token=private (from /crypto.html?fixtures=1#private)",
+            stacktrace: {
+              frames: [
+                {
+                  filename: "http://127.0.0.1:4178/crypto.html?token=private",
+                  abs_path: "/js/data-products-browser.js?v=private",
+                },
+              ],
+            },
+          },
+        ],
+      },
+      debug_meta: { images: [{ code_file: "http://127.0.0.1:4178/js/monitoring-browser.js?private=1" }] },
+    });
+    const value = event.exception?.values?.[0];
+    assert.equal(value?.value, "Failed to fetch http://127.0.0.1:8101/v1/records (from /crypto.html)");
+    assert.deepEqual(value?.stacktrace?.frames?.[0], {
+      filename: "http://127.0.0.1:4178/crypto.html",
+      abs_path: "/js/data-products-browser.js",
+    });
+    assert.equal(event.debug_meta?.images?.[0]?.code_file, "http://127.0.0.1:4178/js/monitoring-browser.js");
+    assert.doesNotMatch(JSON.stringify(event), /private/);
+  });
+
   it("removes local variables from stack frames", () => {
     const event = scrubEvent({
       exception: {

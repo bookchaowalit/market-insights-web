@@ -40,14 +40,15 @@ Standard: ADR-0004 (TDD + SDD). Plan: Big Loop, b-tier-b wave (Tier B to L3).
 | AC-06 | CI fails if the `test` script is removed | `require-tests: true` on `ci-node.yml` v1.1.1 |
 | AC-07 | Existing behaviour unchanged (states, fallback, escaping, GET-only) | existing contract, bundle and DOM tests |
 | AC-08 | Events keep only os/runtime/browser/device/app contexts; `tags.url` is dropped; `?query`/`#hash` is cut from the transaction and every string tag (security-review rule, same as `sentry-ref/sentry.ts`) | `tests/sentry.test.ts` ("keeps only platform contexts …") |
+| AC-10 | `?query`/`#hash` is cut from URLs inside `exception.values[].value`, frame `filename`/`abs_path` and `debug_meta.images[].code_file` (browser frames carry the page URL) | `tests/sentry.test.ts` ("strips query strings and hashes from URLs …") |
 | AC-09 | The scrollable records table is a focusable, named region (axe `scrollable-region-focusable`); links and badges meet contrast/size hints | `tests/dom.test.ts` ("makes the scrollable records table reachable …") + UI review |
 
 Red-first evidence: `tests/sentry.test.ts` was written before `src/monitoring/sentry.ts` and failed with
 `ERR_MODULE_NOT_FOUND … src/monitoring/sentry.ts`; `tests/monitoring-bundle.test.ts` was written before
 `js/monitoring-browser.js` existed and before the pages had the script tag, and failed with `ENOENT … js/monitoring-browser.js`.
-The context/query-string test (AC-08) and the table-region test (AC-09) were each added first and failed
+The context/query-string test (AC-08), the table-region test (AC-09) and the URL-in-exception test (AC-10) were each added first and failed
 (1 failing test each) before the code change. A mutation check (beforeSend replaced by identity) made the bundle
-test fail, so it does check the scrubbing end to end. All 84 tests pass after the change.
+test fail, so it does check the scrubbing end to end. All 85 tests pass after the change.
 
 ## 3. Interfaces and data
 

@@ -26,7 +26,7 @@ of a contract-first consumer. It has no external users, no accounts and no reven
   their records.
 - Read-only: `GET /v1/records` and health reads only; no refresh, no writes, no paid providers, no scraping.
 - Offline demo with `?fixtures=1`.
-- Tests (node:test, 7 files, 84 tests): contract freeze, typed client contract, browser bundle in a sandbox, DOM states in
+- Tests (node:test, 7 files, 85 tests): contract freeze, typed client contract, browser bundle in a sandbox, DOM states in
   happy-dom, static asset references, Sentry options/scrubbing and the monitoring bundle.
 - CI: shared `ci-node.yml` + `security.yml` v1.1.1 (Biome, typecheck, tests required, bundle freshness check).
 - Error reporting: `@sentry/browser`, errors only, personal data scrubbed (see below). **Not wired to a DSN**.
@@ -58,7 +58,7 @@ of a contract-first consumer. It has no external users, no accounts and no reven
   Sentry **only** if the page carries `<meta name="sentry-dsn" content="https://…">`. No page in this repository
   has that tag, and a test fails if one is committed.
 - Errors only: no tracing, no trace headers, no session tracking, no breadcrumbs; `sendDefaultPii: false`;
-  `beforeSend` removes request (page URL with query string, headers), user, breadcrumbs, extra and stack-frame locals, keeps only platform contexts (os, runtime, browser, device, app), drops `tags.url` and cuts query strings and hashes from the transaction and tags.
+  `beforeSend` removes request (page URL with query string, headers), user, breadcrumbs, extra and stack-frame locals, keeps only platform contexts (os, runtime, browser, device, app), drops `tags.url` and cuts query strings and hashes from the transaction, tags, exception messages, stack-frame file paths and debug images.
 - A Sentry project `market-insights-web` exists in org `personal-yu0`, but the DSN is not wired anywhere because
   the Pages build has no build step to inject it. Wiring it is part of D-MIW-1 (inject the meta tag in the Pages
   workflow from a repository variable). Until then Sentry reports nothing.

@@ -13,8 +13,11 @@ type ScrubbableEvent = {
   transaction?: string;
   tags?: Record<string, unknown>;
   contexts?: Record<string, unknown>;
-  exception?: { values?: { stacktrace?: { frames?: { vars?: unknown }[] } }[] };
+  exception?: { values?: { value?: string; stacktrace?: { frames?: Frame[] } }[] };
+  debug_meta?: { images?: { code_file?: string }[] };
 };
+
+type Frame = { vars?: unknown; filename?: string; abs_path?: string };
 
 type NamedIntegration = { name: string };
 
@@ -25,6 +28,8 @@ const DROPPED_INTEGRATIONS = new Set(["BrowserSession", "Breadcrumbs"]);
 const SAFE_CONTEXTS = ["os", "runtime", "browser", "device", "app"];
 
 const stripQuery = (value: string) => value.split(/[?#]/)[0];
+// Drops ?query and #hash from every URL or absolute path inside free text, e.g. an error message.
+const stripUrlQueries = (text: string) => text.replace(/((?:https?:\/\/|\/)[^\s?#"'<>()]*)[?#][^\s"'<>()]*/g, "$1");
 
 export function scrubEvent<T extends ScrubbableEvent>(event: T): T {
   delete event.request;
@@ -44,7 +49,15 @@ export function scrubEvent<T extends ScrubbableEvent>(event: T): T {
     }
   }
   for (const value of event.exception?.values ?? []) {
-    for (const frame of value.stacktrace?.frames ?? []) delete frame.vars;
+    if (typeof value.value === "string") value.value = stripUrlQueries(value.value);
+    for (const frame of value.stacktrace?.frames ?? []) {
+      delete frame.vars;
+      if (typeof frame.filename === "string") frame.filename = stripQuery(frame.filename);
+      if (typeof frame.abs_path === "string") frame.abs_path = stripQuery(frame.abs_path);
+    }
+  }
+  for (const image of event.debug_meta?.images ?? []) {
+    if (typeof image.code_file === "string") image.code_file = stripQuery(image.code_file);
   }
   return event;
 }
