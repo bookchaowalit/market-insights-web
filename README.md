@@ -154,6 +154,12 @@ bundle in a happy-dom window and checks what `mountDashboard` and
 unavailable states, the dashboard banner (ok/warn/bad by how many products
 loaded) and HTML escaping of item keys and values.
 
+`js/monitoring-browser.js` (from `src/monitoring/`, also built by
+`npm run build:browser`) adds Sentry error reporting. It is off unless the host
+page injects `<meta name="sentry-dsn" content="https://...">`; never commit a
+DSN. `tests/sentry.test.ts` and `tests/monitoring-bundle.test.ts` cover the
+errors-only options and the scrubbing of request, user, breadcrumbs and extra data.
+
 Envelope validation checks every required field, known statuses, object records,
 a parseable retrieval timestamp and the requested product's schema version.
 `error`, `forbidden` and `malformed` remain errors even with records;

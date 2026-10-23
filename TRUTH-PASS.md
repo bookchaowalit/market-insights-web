@@ -34,7 +34,8 @@ Tests signal: yes
 
 ## Limitations (honest)
 
-- No PRODUCT.md — showcase depth, not full interview case study.
+- PRODUCT.md added 2026-10-22 (showcase depth). The GitHub Pages site
+  (https://bookchaowalit.github.io/market-insights-web/) shows fixtures only; it cannot reach local APIs.
 
 ## Do not
 
