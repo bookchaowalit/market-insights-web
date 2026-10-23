@@ -13,7 +13,7 @@ owner: Product owner (Book Dev)
 
 ## 1. สรุปคุณค่าในหนึ่งประโยค
 
-หน้าเว็บ static ที่แสดงข้อมูลจาก data product ของ Solo Empire 8 ตัว (crypto, stock, FX, DeFi, flight, SEO, news, discovery; AI tools ปลดระวางแล้ว 2026-10-23 ตาม contract freeze `data-product-contracts-v3`) ผ่าน API อ่านอย่างเดียวในเครื่อง หรือ fixture สำหรับ demo offline
+หน้าเว็บ static ที่แสดงข้อมูลจาก data product ของ Solo Empire 7 ตัว (crypto, stock, FX, DeFi, SEO, news, discovery; AI tools และ flights ปลดระวางแล้ว 2026-10-23 ตาม contract freeze `data-product-contracts-v3` และ `data-product-contracts-v4`) ผ่าน API อ่านอย่างเดียวในเครื่อง หรือ fixture สำหรับ demo offline
 
 ## 2. ปัญหาและผู้ใช้เป้าหมาย
 

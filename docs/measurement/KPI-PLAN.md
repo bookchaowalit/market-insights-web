@@ -39,9 +39,9 @@ Visitor counts on the public demo are vanity numbers here and are not a KPI.
 
 | KPI ID | Type | Formula | Unit | Min volume | Source / event | Baseline | Target | Alert | Cadence |
 |---|---|---|---|---|---|---|---|---|---|
-| KPI-O-01 | outcome | count(state = ready) / 8 | % | 8 products per check | `scripts/verify-browser-consumers.mjs` run against the local stack; planned event `dp_product_loaded` | not yet measured | ≥ 7/8 by 2026-12-31 (flights wait on source permission) | < 5/8 | weekly |
+| KPI-O-01 | outcome | count(state = ready) / 7 | % | 7 products per check | `scripts/verify-browser-consumers.mjs` run against the local stack; planned event `dp_product_loaded` | not yet measured | 7/7 by 2026-12-31 | < 5/7 | weekly |
 | KPI-L-01 | leading | count(now − retrieved_at ≤ 24 h) / count(ready or stale) | % | ≥ 5 products | envelope `retrieved_at`; planned event `dp_product_loaded.age_hours` | not yet measured | ≥ 80% | < 50% | weekly |
-| KPI-L-02 | leading | rejected envelopes / envelopes received | % | ≥ 8 envelopes | client validation result; planned event `dp_envelope_invalid` | not yet measured | 0% | > 0 | per check |
+| KPI-L-02 | leading | rejected envelopes / envelopes received | % | ≥ 7 envelopes | client validation result; planned event `dp_envelope_invalid` | not yet measured | 0% | > 0 | per check |
 | KPI-G-01 | guardrail | Sentry error events / page loads × 100 | per 100 loads | ≥ 100 loads | Sentry issues (`personal-yu0/market-insights-web`) | not measurable (DSN not wired) | ≤ 1 | any new issue | on alert |
 
 ## Event and data specification

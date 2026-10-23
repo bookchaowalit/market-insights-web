@@ -53,18 +53,6 @@
       "status": "fixture"
     },
     {
-      "id": "flights",
-      "name": "Flight Prices",
-      "icon": "\u2708\ufe0f",
-      "repo": "book-flight-data",
-      "port": 8105,
-      "schema_version": "flight.v1",
-      "record_count": 2,
-      "data_status": "stale",
-      "retrieved_at": "2026-08-01T12:00:00Z",
-      "status": "fixture"
-    },
-    {
       "id": "seo",
       "name": "SEO Rankings",
       "icon": "\ud83d\udd0d",

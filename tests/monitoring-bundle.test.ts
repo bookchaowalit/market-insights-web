@@ -67,7 +67,7 @@ describe("monitoring bundle", () => {
 describe("pages", () => {
   it("every page loads the monitoring bundle before the data-products bundle", async () => {
     const pages = (await readdir(root)).filter((name) => name.endsWith(".html"));
-    assert.ok(pages.length >= 9);
+    assert.ok(pages.length >= 8);
     for (const page of pages) {
       const html = await readFile(join(root, page), "utf8");
       const monitoring = html.indexOf('src="js/monitoring-browser.js"');

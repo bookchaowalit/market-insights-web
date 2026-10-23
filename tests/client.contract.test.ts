@@ -58,10 +58,10 @@ it("explicit URL wins over environment and malformed empty data remains an error
 });
 
 describe("data-product catalog", () => {
-  it("covers the six frozen v3 ports plus news.v1 and discovery.v1", () => {
-    assert.equal(DATA_PRODUCT_CATALOG.length, 8);
+  it("covers the five frozen v4 ports plus news.v1 and discovery.v1", () => {
+    assert.equal(DATA_PRODUCT_CATALOG.length, 7);
     const ports = DATA_PRODUCT_CATALOG.map((p) => p.port).sort();
-    assert.deepEqual(ports, [8101, 8102, 8103, 8104, 8105, 8106, 8108, 8110]);
+    assert.deepEqual(ports, [8101, 8102, 8103, 8104, 8106, 8108, 8110]);
     assert.equal(FREE_ONLY_DEFAULTS.freeOnly, true);
     assert.equal(FREE_ONLY_DEFAULTS.allowExternalWrites, false);
     assert.equal(FREE_ONLY_DEFAULTS.allowPaidProviders, false);
@@ -69,7 +69,7 @@ describe("data-product catalog", () => {
 
   it("binds every product to a unique loopback base URL", () => {
     const urls = DATA_PRODUCT_CATALOG.map((p) => p.baseUrl);
-    assert.equal(new Set(urls).size, 8);
+    assert.equal(new Set(urls).size, 7);
     for (const product of DATA_PRODUCT_CATALOG) {
       assert.match(product.baseUrl, /^http:\/\/127\.0\.0\.1:(810[1-8]|8110)$/);
     }
@@ -286,7 +286,7 @@ describe("fetchProductRecords", () => {
         });
       });
     };
-    const result = await fetchProductRecords("flights", {
+    const result = await fetchProductRecords("seo", {
       useFixtures: false,
       fetchImpl,
       loadFixture,
@@ -344,9 +344,9 @@ describe("fetchProductRecords", () => {
     assert.equal(result.errorMessage, "Response is not a versioned data-product envelope");
   });
 
-  it("fetchAllProducts returns eight results in fixture mode", async () => {
+  it("fetchAllProducts returns seven results in fixture mode", async () => {
     const results = await fetchAllProducts({ useFixtures: true, loadFixture });
-    assert.equal(results.length, 8);
+    assert.equal(results.length, 7);
     assert.ok(results.every((r) => r.source === "fixture"));
     assert.ok(results.every((r) => r.freeOnly === true));
     assert.ok(results.every((r) => r.allowExternalWrites === false));

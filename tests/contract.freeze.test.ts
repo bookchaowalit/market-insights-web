@@ -1,7 +1,8 @@
 /**
- * Compatibility freeze test against data-product v3 contracts.
- * SSOT: architecture-docs systems/architecture/data-product-contracts-v3.yaml
- * (freeze_id data-product-contracts-v3; ai_tools.v1 on port 8107 retired 2026-10-23, port not reassigned).
+ * Compatibility freeze test against data-product v4 contracts.
+ * SSOT: architecture-docs systems/architecture/data-product-contracts-v4.yaml
+ * (freeze_id data-product-contracts-v4; flight.v1 on port 8105 retired 2026-10-23 in v4 and
+ * ai_tools.v1 on port 8107 in v3; neither port is ever reused).
  * Breaking changes require a new schema_version (e.g. crypto.v2).
  */
 import assert from "node:assert/strict";
@@ -14,13 +15,12 @@ import { DATA_PRODUCT_CATALOG, FREE_ONLY_DEFAULTS, isDataProductEnvelope } from 
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-/** Frozen v3 map — must match systems/architecture/data-product-contracts-v3.yaml */
+/** Frozen v4 map — must match systems/architecture/data-product-contracts-v4.yaml */
 const FROZEN = [
   { id: "crypto", port: 8101, schemaVersion: "crypto.v1", repo: "book-crypto-data" },
   { id: "stocks", port: 8102, schemaVersion: "stock.v1", repo: "book-stock-data" },
   { id: "fx", port: 8103, schemaVersion: "fx.v1", repo: "book-fx-data" },
   { id: "defi", port: 8104, schemaVersion: "defi.v1", repo: "book-defi-data" },
-  { id: "flights", port: 8105, schemaVersion: "flight.v1", repo: "book-flight-data" },
   { id: "seo", port: 8106, schemaVersion: "seo.v1", repo: "book-seo-data" },
 ] as const;
 
@@ -28,8 +28,8 @@ const ENVELOPE_KEYS = ["schema_version", "source", "retrieved_at", "data_status"
 
 describe("data-product v1 contract freeze (insights consumer)", () => {
   it("catalog matches frozen ports and schema_version values", () => {
-    // v3 is a six-product freeze; news.v1 and discovery.v1 are additive domain extensions.
-    assert.equal(DATA_PRODUCT_CATALOG.length, 8);
+    // v4 is a five-product freeze; news.v1 and discovery.v1 are additive domain extensions.
+    assert.equal(DATA_PRODUCT_CATALOG.length, 7);
     for (const frozen of FROZEN) {
       const product = DATA_PRODUCT_CATALOG.find((p) => p.id === frozen.id);
       assert.ok(product, `missing product ${frozen.id}`);
@@ -38,7 +38,7 @@ describe("data-product v1 contract freeze (insights consumer)", () => {
       assert.equal(product.repo, frozen.repo);
       assert.equal(product.baseUrl, `http://127.0.0.1:${frozen.port}`);
     }
-    assert.deepEqual(DATA_PRODUCT_CATALOG.map((p) => p.port).sort(), [8101, 8102, 8103, 8104, 8105, 8106, 8108, 8110]);
+    assert.deepEqual(DATA_PRODUCT_CATALOG.map((p) => p.port).sort(), [8101, 8102, 8103, 8104, 8106, 8108, 8110]);
     const news = DATA_PRODUCT_CATALOG.find((p) => p.id === "news");
     assert.deepEqual(news && { port: news.port, schemaVersion: news.schemaVersion }, {
       port: 8108,
@@ -116,6 +116,30 @@ describe("data-product v1 contract freeze (insights consumer)", () => {
     for (const page of pages) {
       const html = await readFile(join(root, page), "utf8");
       assert.equal(html.includes("ai_tools.html"), false, `${page} still links ai_tools.html`);
+    }
+  });
+
+  it("retired flight.v1 (port 8105) is gone from the live site", async () => {
+    assert.equal(
+      DATA_PRODUCT_CATALOG.some((p) => (p.id as string) === "flights" || p.port === 8105),
+      false,
+    );
+    const browser = await readFile(join(root, "js/data-products-browser.js"), "utf8");
+    assert.equal(/flights?\b|FLIGHTS|8105/.test(browser), false, "browser bundle still references flights");
+    const summary = JSON.parse(await readFile(join(root, "fixtures/data-products/summary.json"), "utf8")) as {
+      products: { id: string; port: number }[];
+    };
+    assert.equal(
+      summary.products.some((p) => p.id === "flights" || p.port === 8105),
+      false,
+    );
+    await assert.rejects(access(join(root, "flights.html")));
+    await assert.rejects(access(join(root, "fixtures/data-products/flights.json")));
+    const pages = (await readdir(root)).filter((f) => f.endsWith(".html"));
+    assert.ok(pages.length >= 7);
+    for (const page of pages) {
+      const html = await readFile(join(root, page), "utf8");
+      assert.equal(html.includes("flights.html"), false, `${page} still links flights.html`);
     }
   });
 });

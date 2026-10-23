@@ -99,9 +99,6 @@ function renderItemPreview(productId, item) {
   if (productId === "defi") {
     return v(item.project) + " · " + v(item.symbol) + " · APY " + v(item.apy) + "%";
   }
-  if (productId === "flights") {
-    return v(item.origin) + "-" + v(item.destination) + " · ฿" + v(item.price_thb);
-  }
   if (productId === "seo") {
     if (item.capture_kind === "owned_page_provenance") {
       const pageStatus =

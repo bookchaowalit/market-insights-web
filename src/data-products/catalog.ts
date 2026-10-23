@@ -39,15 +39,6 @@ export const DATA_PRODUCT_CATALOG: readonly ProductDefinition[] = [
     baseUrl: "http://127.0.0.1:8104",
   },
   {
-    id: "flights",
-    title: "Flight Prices",
-    icon: "✈️",
-    repo: "book-flight-data",
-    schemaVersion: "flight.v1",
-    port: 8105,
-    baseUrl: "http://127.0.0.1:8105",
-  },
-  {
     id: "seo",
     title: "SEO Provenance",
     icon: "🔍",

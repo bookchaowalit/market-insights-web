@@ -41,15 +41,6 @@
       baseUrl: "http://127.0.0.1:8104"
     },
     {
-      id: "flights",
-      title: "Flight Prices",
-      icon: "\u2708\uFE0F",
-      repo: "book-flight-data",
-      schemaVersion: "flight.v1",
-      port: 8105,
-      baseUrl: "http://127.0.0.1:8105"
-    },
-    {
       id: "seo",
       title: "SEO Provenance",
       icon: "\u{1F50D}",
@@ -139,7 +130,7 @@
   // src/data-products/client.ts
   function configuredBaseUrl(productId, fallback) {
     if (typeof process === "undefined" || !process.env) return fallback;
-    const configured = productId === "crypto" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_CRYPTO : productId === "stocks" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_STOCKS : productId === "fx" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_FX : productId === "defi" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DEFI : productId === "flights" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_FLIGHTS : productId === "seo" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_SEO : productId === "news" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_NEWS : productId === "discovery" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DISCOVERY : void 0;
+    const configured = productId === "crypto" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_CRYPTO : productId === "stocks" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_STOCKS : productId === "fx" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_FX : productId === "defi" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DEFI : productId === "seo" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_SEO : productId === "news" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_NEWS : productId === "discovery" ? process.env.NEXT_PUBLIC_DATA_PRODUCT_URL_DISCOVERY : void 0;
     return configured?.trim() || fallback;
   }
   var ENVELOPE_KEYS = ["schema_version", "source", "retrieved_at", "data_status", "items", "next_cursor"];
@@ -426,9 +417,6 @@
     }
     if (productId === "defi") {
       return v(item.project) + " \xB7 " + v(item.symbol) + " \xB7 APY " + v(item.apy) + "%";
-    }
-    if (productId === "flights") {
-      return v(item.origin) + "-" + v(item.destination) + " \xB7 \u0E3F" + v(item.price_thb);
     }
     if (productId === "seo") {
       if (item.capture_kind === "owned_page_provenance") {
