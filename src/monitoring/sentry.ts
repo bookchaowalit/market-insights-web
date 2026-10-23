@@ -10,6 +10,9 @@ type ScrubbableEvent = {
   user?: unknown;
   breadcrumbs?: unknown;
   extra?: unknown;
+  transaction?: string;
+  tags?: Record<string, unknown>;
+  contexts?: Record<string, unknown>;
   exception?: { values?: { stacktrace?: { frames?: { vars?: unknown }[] } }[] };
 };
 
@@ -18,11 +21,28 @@ type NamedIntegration = { name: string };
 // Default integrations that would send something other than an error event.
 const DROPPED_INTEGRATIONS = new Set(["BrowserSession", "Breadcrumbs"]);
 
+// Contexts that describe the platform only; anything else (trace, response, ...) is dropped.
+const SAFE_CONTEXTS = ["os", "runtime", "browser", "device", "app"];
+
+const stripQuery = (value: string) => value.split(/[?#]/)[0];
+
 export function scrubEvent<T extends ScrubbableEvent>(event: T): T {
   delete event.request;
   delete event.user;
   delete event.breadcrumbs;
   delete event.extra;
+  if (event.contexts) {
+    const kept: Record<string, unknown> = {};
+    for (const key of SAFE_CONTEXTS) if (key in event.contexts) kept[key] = event.contexts[key];
+    event.contexts = kept;
+  }
+  if (typeof event.transaction === "string") event.transaction = stripQuery(event.transaction);
+  if (event.tags) {
+    delete event.tags.url;
+    for (const [key, value] of Object.entries(event.tags)) {
+      if (typeof value === "string") event.tags[key] = stripQuery(value);
+    }
+  }
   for (const value of event.exception?.values ?? []) {
     for (const frame of value.stacktrace?.frames ?? []) delete frame.vars;
   }

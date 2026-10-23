@@ -96,6 +96,23 @@ describe("scrubEvent", () => {
     assert.equal(event.extra, undefined);
   });
 
+  it("keeps only platform contexts and strips query strings from the transaction and tags", () => {
+    const event = scrubEvent({
+      transaction: "/crypto.html?fixtures=1&token=private",
+      tags: { url: "http://127.0.0.1:4178/crypto.html?token=private", page: "/crypto.html#private" },
+      contexts: {
+        trace: { trace_id: "t" },
+        response: { status_code: 500, url: "/v1/records?token=private" },
+        browser: { name: "Chrome" },
+        os: { name: "Linux" },
+      },
+    });
+    assert.equal(event.transaction, "/crypto.html");
+    assert.deepEqual(event.tags, { page: "/crypto.html" });
+    assert.deepEqual(event.contexts, { browser: { name: "Chrome" }, os: { name: "Linux" } });
+    assert.doesNotMatch(JSON.stringify(event), /private/);
+  });
+
   it("removes local variables from stack frames", () => {
     const event = scrubEvent({
       exception: {
