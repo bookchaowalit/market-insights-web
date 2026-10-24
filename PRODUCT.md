@@ -45,14 +45,15 @@ of a contract-first consumer. It has no external users, no accounts and no reven
 
 ## Live URL and deploy state
 
-- **Live:** https://bookchaowalit.github.io/market-insights-web/ — GitHub Pages, *legacy* build from `main` at the
-  repository root (checked 2026-10-22: HTTP 200, last-modified 2026-10-17). Every push to `main` republishes the
-  site; there is no deploy workflow, so a push is published even if CI fails.
-- What a visitor sees: the dashboard on fixtures, after the browser's attempts to reach `127.0.0.1:81xx` fail.
-- Owner decision (D-MIW-1): replace the legacy Pages build with a GitHub Actions Pages workflow that runs only
-  after CI passes, publishes only the site files (pages, `css/`, `js/`, `fixtures/`; not `archive/`, `DOCPACK/`,
-  `docs/`), and makes the public build fixtures-only so it does not probe the visitor's local ports. This needs the
-  repository's Pages source switched to "GitHub Actions", so it is not done here.
+- **Live:** https://bookchaowalit.github.io/market-insights-web/ — GitHub Pages, deployed by the
+  `Pages deploy` workflow (owner decision D-MIW-1, done 2026-10-24; Pages source: GitHub Actions).
+- It runs only after CI succeeds on a push to `main`. `scripts/build-pages.ts` publishes only the pages,
+  `css/`, `js/` and `fixtures/` (not `archive/`, `DOCPACK/`, `docs/` or sources), forces every page onto
+  fixtures (`window.DATA_PRODUCTS_USE_FIXTURES = true`, so the public site never probes the visitor's
+  local ports) and adds a `build-commit` meta tag.
+- The `deploy-smoke` job then checks the live site: the dashboard answers 200, its `build-commit` is the
+  deployed commit, it is forced onto fixtures, and `stocks.html` renders (`scripts/deploy-smoke.sh`).
+- What a visitor sees: the dashboard on fixtures (the data is dated 2026-08 / 2026-09 and marked stale).
 
 ## Error reporting (Sentry)
 
@@ -61,9 +62,9 @@ of a contract-first consumer. It has no external users, no accounts and no reven
   has that tag, and a test fails if one is committed.
 - Errors only: no tracing, no trace headers, no session tracking, no breadcrumbs; `sendDefaultPii: false`;
   `beforeSend` removes request (page URL with query string, headers), user, breadcrumbs, extra and stack-frame locals, keeps only platform contexts (os, runtime, browser, device, app), drops `tags.url` and cuts query strings and hashes from the transaction, tags, exception messages, stack-frame file paths and debug images.
-- A Sentry project `market-insights-web` exists in org `personal-yu0`, but the DSN is not wired anywhere because
-  the Pages build has no build step to inject it. Wiring it is part of D-MIW-1 (inject the meta tag in the Pages
-  workflow from a repository variable). Until then Sentry reports nothing.
+- A Sentry project `market-insights-web` exists in org `personal-yu0`. The Pages workflow adds the
+  `sentry-dsn` meta tag only when the repository variable `SENTRY_DSN` is set; it is not set yet, so Sentry
+  reports nothing.
 
 ## Related
 

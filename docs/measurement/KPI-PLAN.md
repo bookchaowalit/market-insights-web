@@ -19,7 +19,7 @@ template: architecture-docs templates/sdlc/kpi-and-instrumentation-plan.md
 | AI maker | Claude Code (b-tier-b session, 2026-10-22) |
 | AI reviewer | not reviewed yet |
 | Charter objectives | none written; OBJ-01 below is taken from the Tier B roadmap goal |
-| Analytics / data source of truth | none live. Planned: the page's own load results (states per product). Sentry (`personal-yu0/market-insights-web`) is the only planned signal and is **not wired** (no DSN on the Pages build, see PRODUCT.md D-MIW-1). Product analytics: D4 decided PostHog free tier, but no account or key exists yet, so nothing is sent. |
+| Analytics / data source of truth | none live. Planned: the page's own load results (states per product). Sentry (`personal-yu0/market-insights-web`) is the only planned signal and is **not wired** (the Pages workflow injects the DSN only from the repository variable `SENTRY_DSN`, which is not set; see PRODUCT.md). Product analytics: D4 decided PostHog free tier, but no account or key exists yet, so nothing is sent. |
 | Dashboard | none |
 | Next review | 2026-11-15 (Big Loop M1) |
 
@@ -60,7 +60,7 @@ revisited before it ships.
 
 | Dashboard / alert | KPIs | Location | Status |
 |---|---|---|---|
-| Sentry issue alerts | KPI-G-01 | Sentry project `market-insights-web` | planned: needs D-MIW-1 (DSN injection on the Pages build) |
+| Sentry issue alerts | KPI-G-01 | Sentry project `market-insights-web` | planned: needs the repository variable `SENTRY_DSN` (injection is in the Pages workflow since D-MIW-1) |
 | Weekly consumer check | KPI-O-01, KPI-L-01, KPI-L-02 | `node scripts/verify-browser-consumers.mjs` output | planned: script needs a summary line per KPI |
 
 ## Instrumentation verification (before G10)
