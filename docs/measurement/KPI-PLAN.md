@@ -1,6 +1,6 @@
 ---
 title: "Solo Empire Insights — KPI and Instrumentation Plan"
-status: draft
+status: approved
 created: 2026-10-22
 updated: 2026-10-22
 description: "How the data-product consumer is judged: do the products answer with valid, fresh envelopes, and does the page stay error-free."
@@ -14,10 +14,10 @@ template: architecture-docs templates/sdlc/kpi-and-instrumentation-plan.md
 | Field | Value |
 |---|---|
 | Product | bookchaowalit/market-insights-web (https://bookchaowalit.github.io/market-insights-web/, fixtures only) |
-| Version / status | 0.1 / **draft** — definitions only; no baseline captured |
+| Version / status | 0.1 / **approved** (2026-10-24) — definitions only; no baseline captured |
 | Metric owner | Owner (bookchaowalit) |
 | AI maker | Claude Code (b-tier-b session, 2026-10-22) |
-| AI reviewer | not reviewed yet |
+| AI reviewer | independent Claude reviewer subagent (`solo:solo-reviewer`, Sonnet, read-only, no maker context), 2026-10-24: approved (see Approval) |
 | Charter objectives | none written; OBJ-01 below is taken from the Tier B roadmap goal |
 | Analytics / data source of truth | none live. Planned: the page's own load results (states per product). Sentry (`personal-yu0/market-insights-web`) is the only planned signal and is **not wired** (the Pages workflow injects the DSN only from the repository variable `SENTRY_DSN`, which is not set; see PRODUCT.md). Product analytics: D4 decided PostHog free tier, but no account or key exists yet, so nothing is sent. |
 | Dashboard | none |
@@ -80,3 +80,12 @@ revisited before it ships.
 | Date | KPI ID | Change | Reason | Baseline restated? | Approved by |
 |---|---|---|---|---|---|
 | 2026-10-22 | all | first draft | b-tier-b L3 pass | n/a | pending owner |
+
+## Approval (2026-10-24)
+
+| Field | Value |
+|---|---|
+| Checker | independent Claude reviewer subagent (`solo:solo-reviewer`, Sonnet, read-only, no maker context) |
+| Approver | AI approval under the owner's process (approvals by the owner or AI with evidence; maker and checker are different agents). Recorded by Claude session oa-remainder on the owner's instruction "ทำที่เหลือให้หน่อย" (2026-10-24) |
+| Verdict | **approved** |
+| Evidence | src/monitoring/sentry.ts (no PII, scrubEvent, DSN from meta); pages.yml vars.SENTRY_DSN; monitoring tests; 7 product pages; dp_* events planned; Sentry marked inactive. |
